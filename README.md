@@ -1,4 +1,11 @@
-# OASE for Home Assistant
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="custom_components/oase/brand/dark_logo@2x.png">
+    <img src="custom_components/oase/brand/logo@2x.png" alt="OASE" width="360">
+  </picture>
+</p>
+
+<h1 align="center">OASE for Home Assistant</h1>
 
 Home Assistant custom integration for **OASE InScenio FM-Master Cloud** (EGC / "OASE Control")
 smart garden & pond power controllers. Control the outlets, the dimmable outlet, attached
