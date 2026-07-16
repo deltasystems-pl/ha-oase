@@ -1,0 +1,116 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect your OASE account",
+        "description": "Sign in with the email address and password of your OASE Control account.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        },
+        "data_description": {
+          "email": "The email address you use to sign in to the OASE Control app.",
+          "password": "Your OASE Control account password."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate your OASE account",
+        "description": "The stored credentials for {email} are no longer valid. Enter the password again.",
+        "data": {
+          "password": "Password"
+        }
+      },
+      "reconfigure": {
+        "title": "Update your OASE credentials",
+        "description": "Change the email address or password used to connect to your OASE account.",
+        "data": {
+          "email": "Email",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid authentication. Check your email and password.",
+      "cannot_connect": "Failed to connect to the OASE cloud. Try again later.",
+      "no_devices": "No OASE gateways were found on this account.",
+      "unknown": "An unexpected error occurred."
+    },
+    "abort": {
+      "already_configured": "This OASE account is already configured.",
+      "reauth_successful": "Re-authentication was successful.",
+      "reconfigure_successful": "The configuration was updated successfully.",
+      "wrong_account": "The credentials belong to a different OASE account than the one being reconfigured."
+    }
+  },
+  "entity": {
+    "switch": {
+      "socket_1": {
+        "name": "Socket 1"
+      },
+      "socket_2": {
+        "name": "Socket 2"
+      },
+      "socket_3": {
+        "name": "Socket 3"
+      },
+      "device_on": {
+        "name": "Switched on"
+      }
+    },
+    "light": {
+      "dimmer": {
+        "name": "Dimmer"
+      },
+      "rgb_channel": {
+        "name": "RGB {channel}"
+      }
+    },
+    "binary_sensor": {
+      "connectivity": {
+        "name": "Connectivity"
+      }
+    },
+    "sensor": {
+      "dimmer_value": {
+        "name": "Dimmer level"
+      },
+      "pump_status": {
+        "name": "Flow control status",
+        "state": {
+          "SfcOff": "Single flow control off",
+          "DfcOff": "Dual flow control off",
+          "SfcOn": "Single flow control on",
+          "DfcOn": "Dual flow control on",
+          "ErrorCode": "Error"
+        }
+      },
+      "pump_level": {
+        "name": "Pump level"
+      },
+      "operating_hours": {
+        "name": "Operating hours"
+      }
+    },
+    "number": {
+      "pump_power": {
+        "name": "Power"
+      },
+      "rgb_speed": {
+        "name": "RGB {channel} effect speed"
+      }
+    },
+    "select": {
+      "pump_show": {
+        "name": "Show"
+      }
+    }
+  },
+  "exceptions": {
+    "gateway_offline": {
+      "message": "The OASE gateway is offline and cannot be controlled right now."
+    },
+    "command_failed": {
+      "message": "The command could not be sent to the OASE gateway."
+    }
+  }
+}

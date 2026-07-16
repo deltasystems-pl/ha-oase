@@ -1,0 +1,116 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "OASE-Konto verbinden",
+        "description": "Melde dich mit der E-Mail-Adresse und dem Passwort deines OASE-Control-Kontos an.",
+        "data": {
+          "email": "E-Mail",
+          "password": "Passwort"
+        },
+        "data_description": {
+          "email": "Die E-Mail-Adresse, mit der du dich in der OASE-Control-App anmeldest.",
+          "password": "Das Passwort deines OASE-Control-Kontos."
+        }
+      },
+      "reauth_confirm": {
+        "title": "OASE-Konto erneut authentifizieren",
+        "description": "Die gespeicherten Zugangsdaten für {email} sind nicht mehr gültig. Gib das Passwort erneut ein.",
+        "data": {
+          "password": "Passwort"
+        }
+      },
+      "reconfigure": {
+        "title": "OASE-Zugangsdaten aktualisieren",
+        "description": "Ändere die E-Mail-Adresse oder das Passwort für die Verbindung zu deinem OASE-Konto.",
+        "data": {
+          "email": "E-Mail",
+          "password": "Passwort"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Ungültige Anmeldedaten. Überprüfe E-Mail und Passwort.",
+      "cannot_connect": "Verbindung zur OASE-Cloud fehlgeschlagen. Versuche es später erneut.",
+      "no_devices": "Auf diesem Konto wurden keine OASE-Gateways gefunden.",
+      "unknown": "Ein unerwarteter Fehler ist aufgetreten."
+    },
+    "abort": {
+      "already_configured": "Dieses OASE-Konto ist bereits eingerichtet.",
+      "reauth_successful": "Die erneute Authentifizierung war erfolgreich.",
+      "reconfigure_successful": "Die Konfiguration wurde erfolgreich aktualisiert.",
+      "wrong_account": "Die Zugangsdaten gehören zu einem anderen OASE-Konto als dem, das neu konfiguriert wird."
+    }
+  },
+  "entity": {
+    "switch": {
+      "socket_1": {
+        "name": "Steckdose 1"
+      },
+      "socket_2": {
+        "name": "Steckdose 2"
+      },
+      "socket_3": {
+        "name": "Steckdose 3"
+      },
+      "device_on": {
+        "name": "Eingeschaltet"
+      }
+    },
+    "light": {
+      "dimmer": {
+        "name": "Dimmer"
+      },
+      "rgb_channel": {
+        "name": "RGB {channel}"
+      }
+    },
+    "binary_sensor": {
+      "connectivity": {
+        "name": "Verbindung"
+      }
+    },
+    "sensor": {
+      "dimmer_value": {
+        "name": "Dimmwert"
+      },
+      "pump_status": {
+        "name": "Flusssteuerungsstatus",
+        "state": {
+          "SfcOff": "Einfache Flusssteuerung aus",
+          "DfcOff": "Doppelte Flusssteuerung aus",
+          "SfcOn": "Einfache Flusssteuerung ein",
+          "DfcOn": "Doppelte Flusssteuerung ein",
+          "ErrorCode": "Fehler"
+        }
+      },
+      "pump_level": {
+        "name": "Pumpenstufe"
+      },
+      "operating_hours": {
+        "name": "Betriebsstunden"
+      }
+    },
+    "number": {
+      "pump_power": {
+        "name": "Leistung"
+      },
+      "rgb_speed": {
+        "name": "RGB {channel} Effektgeschwindigkeit"
+      }
+    },
+    "select": {
+      "pump_show": {
+        "name": "Show"
+      }
+    }
+  },
+  "exceptions": {
+    "gateway_offline": {
+      "message": "Das OASE-Gateway ist offline und kann derzeit nicht gesteuert werden."
+    },
+    "command_failed": {
+      "message": "Der Befehl konnte nicht an das OASE-Gateway gesendet werden."
+    }
+  }
+}
