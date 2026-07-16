@@ -82,6 +82,17 @@ def mock_client(inventory: Inventory) -> Generator[MagicMock]:
         client.async_get_inventory = AsyncMock(return_value=inventory)
         client.async_set_socket = AsyncMock(return_value=True)
         client.async_set_dimmer_value = AsyncMock(return_value=True)
+        # EGC device reads the coordinator performs while enriching state; give
+        # concrete values so no mock objects leak into entity state / diagnostics.
+        client.async_get_device_on = AsyncMock(return_value=True)
+        client.async_get_pump_power = AsyncMock(return_value=128)
+        client.async_get_led_channels = AsyncMock(return_value=[])
+        client.async_get_operating_hours = AsyncMock(return_value=100)
+        client.async_get_software_version = AsyncMock(return_value="1.0")
+        client.async_set_device_on = AsyncMock(return_value=None)
+        client.async_set_pump_power = AsyncMock(return_value=None)
+        client.async_set_pump_show = AsyncMock(return_value=True)
+        client.async_set_led_channel = AsyncMock(return_value=True)
         yield client_cls
 
 
