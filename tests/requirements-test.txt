@@ -1,4 +1,6 @@
 # Test dependencies for the OASE Home Assistant integration.
 # pytest-homeassistant-custom-component pins a matching Home Assistant + pytest stack.
 pytest-homeassistant-custom-component
-pyoase==0.1.0
+# The integration ships with `pyoase==0.1.0` from PyPI (see manifest.json). Tests
+# install it from the tagged source so CI is not blocked on the PyPI release.
+pyoase @ git+https://github.com/deltasystems-pl/pyoase@v0.1.0
