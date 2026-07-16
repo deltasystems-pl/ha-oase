@@ -6,7 +6,13 @@ smart garden & pond power controllers. Control the outlets, the dimmable outlet,
 and read device diagnostics — directly from Home Assistant.
 
 It talks to the OASE cloud over HTTPS using your OASE account email and password (Azure AD B2C),
-via the [`pyoase`](../pyoase) library. No local network setup, sniffing, or static IPs required.
+via the [`pyoase`](https://github.com/deltasystems-pl/pyoase) library. No local network setup,
+sniffing, or static IPs required.
+
+[![Open your Home Assistant instance and open this repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=deltasystems-pl&repository=ha-oase&category=integration)
+
+Click the button above to add this repository to **HACS** in one step (then install & restart), or
+follow the [manual steps](#installation) below.
 
 > **Not affiliated with, endorsed by, or supported by OASE GmbH.** Use at your own risk.
 > "OASE", "InScenio", and "FM-Master" are trademarks of their respective owners.
@@ -56,7 +62,9 @@ and restart Home Assistant.
 
 ## Setup
 
-1. **Settings → Devices & services → Add integration → OASE**.
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=oase)
+
+1. **Settings → Devices & services → Add integration → OASE** (or use the button above).
 2. Enter the **email** and **password** of your OASE Control account.
 3. The integration validates the credentials against the OASE cloud and creates a device for
    each gateway on the account.
