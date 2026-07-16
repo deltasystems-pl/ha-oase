@@ -77,11 +77,11 @@
       "pump_status": {
         "name": "Flusssteuerungsstatus",
         "state": {
-          "SfcOff": "Einfache Flusssteuerung aus",
-          "DfcOff": "Doppelte Flusssteuerung aus",
-          "SfcOn": "Einfache Flusssteuerung ein",
-          "DfcOn": "Doppelte Flusssteuerung ein",
-          "ErrorCode": "Fehler"
+          "sfc_off": "Einfache Flusssteuerung aus",
+          "dfc_off": "Doppelte Flusssteuerung aus",
+          "sfc_on": "Einfache Flusssteuerung ein",
+          "dfc_on": "Doppelte Flusssteuerung ein",
+          "error": "Fehler"
         }
       },
       "pump_level": {

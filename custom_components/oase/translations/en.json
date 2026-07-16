@@ -77,11 +77,11 @@
       "pump_status": {
         "name": "Flow control status",
         "state": {
-          "SfcOff": "Single flow control off",
-          "DfcOff": "Dual flow control off",
-          "SfcOn": "Single flow control on",
-          "DfcOn": "Dual flow control on",
-          "ErrorCode": "Error"
+          "sfc_off": "Single flow control off",
+          "dfc_off": "Dual flow control off",
+          "sfc_on": "Single flow control on",
+          "dfc_on": "Dual flow control on",
+          "error": "Error"
         }
       },
       "pump_level": {

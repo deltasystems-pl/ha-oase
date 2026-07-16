@@ -20,8 +20,21 @@ from pyoase import PumpState
 from .coordinator import OaseConfigEntry, OaseDataUpdateCoordinator
 from .entity import OaseDeviceEntity, OaseGatewayEntity
 
-# EgcFlowControlState values reported in ``fcStatus`` (see REVERSE_ENGINEERING.md).
-_FC_STATUS_OPTIONS = ["SfcOff", "DfcOff", "SfcOn", "DfcOn", "ErrorCode"]
+# EgcFlowControlState values reported in ``fcStatus`` (see REVERSE_ENGINEERING.md),
+# mapped to HA enum-slug options (translation keys must be lowercase slugs).
+_FC_STATUS_SLUGS = {
+    "SfcOff": "sfc_off",
+    "DfcOff": "dfc_off",
+    "SfcOn": "sfc_on",
+    "DfcOn": "dfc_on",
+    "ErrorCode": "error",
+}
+_FC_STATUS_OPTIONS = list(_FC_STATUS_SLUGS.values())
+
+
+def _fc_status_slug(state: PumpState) -> StateType:
+    """Map the raw ``fcStatus`` value to its enum slug."""
+    return _FC_STATUS_SLUGS.get(state.fc_status) if state.fc_status else None
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -37,7 +50,7 @@ PUMP_SENSORS: tuple[OasePumpSensorEntityDescription, ...] = (
         translation_key="pump_status",
         device_class=SensorDeviceClass.ENUM,
         options=_FC_STATUS_OPTIONS,
-        value_fn=lambda state: state.fc_status,
+        value_fn=_fc_status_slug,
     ),
     OasePumpSensorEntityDescription(
         key="dimmer_value",
