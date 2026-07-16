@@ -1,0 +1,55 @@
+{
+  "user": {
+    "givenName": "Test",
+    "surname": "User",
+    "cultureInfo": "en-US"
+  },
+  "gateways": [
+    {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "serialNumber": "000000000000",
+      "articleNumber": 70788,
+      "gatewayType": "FmMasterWLanEgcCloudEsp",
+      "isOnline": true,
+      "onlineState": {
+        "isOnline": true,
+        "eventTime": "2026-07-16T10:00:00Z"
+      },
+      "socketsState": {
+        "value": {
+          "socket1": true,
+          "socket2": false,
+          "socket3": false,
+          "socketDimmer": true,
+          "dimmerValue": 128
+        },
+        "timestamp": "2026-07-16T10:00:00Z"
+      },
+      "customAttributesJson": "{\"name\": \"Test Gateway\"}",
+      "devices": [
+        {
+          "id": "00000000-0000-4000-8000-0000000000a1",
+          "deviceNumber": 1,
+          "articleNumber": 57130,
+          "deviceType": "GardenPump",
+          "connectionState": {
+            "isConnected": true,
+            "timestamp": "2026-07-16T10:00:00Z"
+          },
+          "dmxPumpState": {
+            "value": {
+              "deviceOn": true,
+              "dimmerValue": 200,
+              "fcMode": 1,
+              "fcStatus": "SfcOn"
+            },
+            "timestamp": "2026-07-16T10:00:00Z"
+          },
+          "rdmData": null,
+          "isActive": true,
+          "customAttributesJson": "{\"name\": \"Pond Pump\"}"
+        }
+      ]
+    }
+  ]
+}
