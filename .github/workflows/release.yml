@@ -1,27 +1,44 @@
 name: Release
 
+# Professional release flow: when a GitHub release is published, stamp the
+# manifest version from the tag, zip the integration, and attach the zip so HACS
+# installs the exact released artifact.
+
 on:
   release:
     types: [published]
 
-permissions:
-  contents: write
+permissions: {}
 
 jobs:
-  release-zip:
-    name: Attach integration zip to the release
+  release:
+    name: Publish release artifact
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # HACS installs from the repo, but a versioned zip of the component is a
-      # convenient manual-install artifact attached to each GitHub release.
-      - name: Create zip
+      - name: Stamp manifest version from the release tag
+        shell: bash
+        run: |
+          # Accept tags like "v1.2.3" or "1.2.3"; the manifest wants "1.2.3".
+          version="${{ github.event.release.tag_name }}"
+          version="${version#v}"
+          manifest="custom_components/oase/manifest.json"
+          tmp="$(mktemp)"
+          jq --arg v "$version" '.version = $v' "$manifest" > "$tmp"
+          mv "$tmp" "$manifest"
+          echo "manifest version set to $version"
+
+      - name: Zip the integration
+        shell: bash
         run: |
           cd custom_components/oase
-          zip -r "${{ github.workspace }}/oase.zip" .
+          zip -r "${{ github.workspace }}/oase.zip" . -x '*.pyc' -x '__pycache__/*'
 
-      - name: Upload release asset
+      - name: Attach zip to the release
         uses: softprops/action-gh-release@v2
         with:
           files: oase.zip
