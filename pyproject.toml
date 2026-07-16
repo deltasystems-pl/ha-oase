@@ -1,0 +1,13 @@
+# This file configures tooling for the repository (test + lint). It is not a
+# Python package: the integration ships as custom_components/oase for HACS.
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
