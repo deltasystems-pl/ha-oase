@@ -90,8 +90,9 @@ State is polled from the cloud every 30 seconds.
 Home Assistant → `pyoase` → OASE cloud REST API → gateway → device. Reads use
 `GET /User/Inventory`; writes relay native **O-Net** packets through
 `POST /Gateway/{id}/SendONetPacket`. All protocol/auth logic lives in the standalone
-[`pyoase`](../pyoase) library. See
-[`pyoase/docs/REVERSE_ENGINEERING.md`](../pyoase/docs/REVERSE_ENGINEERING.md) for the details.
+[`pyoase`](https://github.com/deltasystems-pl/pyoase) library. See its
+[`docs/REVERSE_ENGINEERING.md`](https://github.com/deltasystems-pl/pyoase/blob/main/docs/REVERSE_ENGINEERING.md)
+for the details.
 
 ## Troubleshooting
 
