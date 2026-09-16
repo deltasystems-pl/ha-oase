@@ -28,7 +28,7 @@ async def async_setup_entry(
         for device in gateway.devices:
             if device.id is None or device.device_number is None:
                 continue
-            if device.pump_state is not None:
+            if device.can_set_power:
                 entities.append(OasePumpPowerNumber(coordinator, gateway.id, device.id))
             if device.is_led:
                 entities.extend(

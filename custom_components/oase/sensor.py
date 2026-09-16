@@ -15,7 +15,7 @@ from homeassistant.const import EntityCategory, UnitOfTime
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.typing import StateType
-from pyoase import PumpState
+from pyoase import Device, PumpState
 
 from .coordinator import OaseConfigEntry, OaseDataUpdateCoordinator
 from .entity import OaseDeviceEntity, OaseGatewayEntity
@@ -42,6 +42,10 @@ class OasePumpSensorEntityDescription(SensorEntityDescription):
     """Describes an OASE pump telemetry sensor."""
 
     value_fn: Callable[[PumpState], StateType]
+    #: Whether a given device reports this value at all. Not every pump runs
+    #: flow-control shows, and a sensor for a value that will never arrive is
+    #: worse than no sensor (see issue #1).
+    supported_fn: Callable[[Device], bool]
 
 
 PUMP_SENSORS: tuple[OasePumpSensorEntityDescription, ...] = (
@@ -51,12 +55,16 @@ PUMP_SENSORS: tuple[OasePumpSensorEntityDescription, ...] = (
         device_class=SensorDeviceClass.ENUM,
         options=_FC_STATUS_OPTIONS,
         value_fn=_fc_status_slug,
+        supported_fn=lambda device: (
+            device.pump_state is not None and device.pump_state.has_flow_control
+        ),
     ),
     OasePumpSensorEntityDescription(
         key="dimmer_value",
         translation_key="pump_level",
         state_class=SensorStateClass.MEASUREMENT,
         value_fn=lambda state: state.dimmer_value,
+        supported_fn=lambda device: device.can_set_power,
     ),
 )
 
@@ -75,11 +83,11 @@ async def async_setup_entry(
         for device in gateway.devices:
             if device.id is None:
                 continue
-            if device.pump_state is not None:
-                entities.extend(
-                    OasePumpSensor(coordinator, gateway.id, device.id, description)
-                    for description in PUMP_SENSORS
-                )
+            entities.extend(
+                OasePumpSensor(coordinator, gateway.id, device.id, description)
+                for description in PUMP_SENSORS
+                if description.supported_fn(device)
+            )
             # Operating-hours counter is available on any EGC device (pump or LED).
             if device.device_number is not None:
                 entities.append(OaseOperatingHoursSensor(coordinator, gateway.id, device.id))

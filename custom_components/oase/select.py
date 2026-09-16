@@ -29,14 +29,18 @@ async def async_setup_entry(
         if device.id is not None
         and device.device_number is not None
         and device.pump_state is not None
+        and device.pump_state.has_flow_control
     )
 
 
 class OasePumpShowSelect(OaseDeviceEntity, SelectEntity):
     """The pump's flow-control "show" program (Wild, Calm, Splashy, …, or Off).
 
-    Reads from ``dmxPumpState`` (``fcMode`` + ``fcStatus``), which the cloud keeps
-    current for this feature; writes go through the 0x5000 show packet.
+    Offered only to pumps that run shows. Shows are a fountain-pump feature, and
+    the state for them lives solely in the cloud's ``dmxPumpState`` (``fcMode`` +
+    ``fcStatus``), which it keeps current; there is no RDM equivalent to fall
+    back on, so a pump without that block has neither the feature nor a way to
+    report it. Writes go through the 0x5000 show packet.
     """
 
     _attr_translation_key = "pump_show"

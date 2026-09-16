@@ -20,6 +20,7 @@ from custom_components.oase.const import (
 )
 
 GATEWAY_ID = "00000000-0000-4000-8000-000000000001"
+DEVICE_ID = "00000000-0000-4000-8000-0000000000a1"
 
 
 @pytest.fixture(autouse=True)

@@ -40,9 +40,7 @@ async def async_setup_entry(
         entities.extend(
             OaseDeviceSwitch(coordinator, gateway.id, device.id)
             for device in gateway.devices
-            if device.id is not None
-            and device.device_number is not None
-            and device.pump_state is not None
+            if device.id is not None and device.device_number is not None and device.can_switch
         )
     async_add_entities(entities)
 
