@@ -45,9 +45,31 @@
             },
             "timestamp": "2026-07-16T10:00:00Z"
           },
-          "rdmData": null,
+          "rdmData": {
+            "0x0050": {
+              "value": "EBCAOQ==",
+              "timestamp": "2026-07-16T10:00:00Z"
+            },
+            "0x8039": {
+              "value": "yA==",
+              "timestamp": "2026-07-16T10:00:00Z"
+            }
+          },
           "isActive": true,
           "customAttributesJson": "{\"name\": \"Pond Pump\"}"
+        }
+      ],
+      "incrementStates": [
+        {
+          "key": "Name",
+          "value": {
+            "data": [
+              {
+                "request": "XCNPQQ==",
+                "reply": "XCNPQQ=="
+              }
+            ]
+          }
         }
       ]
     }

@@ -20,6 +20,7 @@ from custom_components.oase.const import (
 )
 
 GATEWAY_ID = "00000000-0000-4000-8000-000000000001"
+DEVICE_ID = "00000000-0000-4000-8000-0000000000a1"
 
 
 @pytest.fixture(autouse=True)
@@ -30,10 +31,15 @@ def auto_enable_custom_integrations(
     yield
 
 
+def load_raw_inventory() -> dict:
+    """Load the synthetic inventory fixture as the raw cloud JSON."""
+    path = Path(__file__).parent / "fixtures" / "inventory.json"
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 def load_inventory() -> Inventory:
     """Load the synthetic inventory fixture as an :class:`Inventory`."""
-    path = Path(__file__).parent / "fixtures" / "inventory.json"
-    return Inventory.from_dict(json.loads(path.read_text(encoding="utf-8")))
+    return Inventory.from_dict(load_raw_inventory())
 
 
 @pytest.fixture
@@ -80,6 +86,7 @@ def mock_client(inventory: Inventory) -> Generator[MagicMock]:
     ):
         client = client_cls.return_value
         client.async_get_inventory = AsyncMock(return_value=inventory)
+        client.async_get_inventory_raw = AsyncMock(return_value=load_raw_inventory())
         client.async_set_socket = AsyncMock(return_value=True)
         client.async_set_dimmer_value = AsyncMock(return_value=True)
         # EGC device reads the coordinator performs while enriching state; give
@@ -89,6 +96,7 @@ def mock_client(inventory: Inventory) -> Generator[MagicMock]:
         client.async_get_led_channels = AsyncMock(return_value=[])
         client.async_get_operating_hours = AsyncMock(return_value=100)
         client.async_get_software_version = AsyncMock(return_value="1.0")
+        client.async_get_supported_parameters = AsyncMock(return_value=(0x0050, 0x1010))
         client.async_set_device_on = AsyncMock(return_value=None)
         client.async_set_pump_power = AsyncMock(return_value=None)
         client.async_set_pump_show = AsyncMock(return_value=True)

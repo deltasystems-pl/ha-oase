@@ -1,4 +1,4 @@
 # Test dependencies for the OASE Home Assistant integration.
 # pytest-homeassistant-custom-component pins a matching Home Assistant + pytest stack.
 pytest-homeassistant-custom-component
-pyoase==0.1.1
+pyoase==0.1.2

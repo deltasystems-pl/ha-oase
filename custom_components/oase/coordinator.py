@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, replace
 from datetime import timedelta
 from typing import Any
@@ -21,6 +22,9 @@ from pyoase import (
     OaseConnectionError,
     OaseError,
     OaseGatewayOfflineError,
+    OaseResponseError,
+    PumpState,
+    rdm,
 )
 
 from .const import CONF_EMAIL, CONF_PASSWORD, CONF_TOKEN_DATA, DEFAULT_SCAN_INTERVAL, DOMAIN
@@ -28,6 +32,15 @@ from .const import CONF_EMAIL, CONF_PASSWORD, CONF_TOKEN_DATA, DEFAULT_SCAN_INTE
 _LOGGER = logging.getLogger(__name__)
 
 type OaseConfigEntry = ConfigEntry[OaseRuntimeData]
+type _PumpRead = Callable[[OaseCloudClient, str, int], Awaitable[Any]]
+
+#: The two pump controls, as (RDM parameter, ``PumpState`` field, read).
+#: Reads only: this table doubles as the capability probe, and a write must
+#: never be used to find out whether a device supports something.
+_PUMP_READS: tuple[tuple[int, str, _PumpRead], ...] = (
+    (rdm.Pid.DEVICE_ON, "device_on", lambda client, gw, n: client.async_get_device_on(gw, n)),
+    (rdm.Pid.PUMP_POWER, "dimmer_value", lambda client, gw, n: client.async_get_pump_power(gw, n)),
+)
 
 
 @dataclass
@@ -64,9 +77,13 @@ class OaseDataUpdateCoordinator(DataUpdateCoordinator[Inventory]):
         # reconfiguration apart from a silent refresh-token rotation.
         self._email = config_entry.data.get(CONF_EMAIL)
         self._password = config_entry.data.get(CONF_PASSWORD)
-        # Cache of static per-device info (software version) keyed by device number,
-        # so we read it over RDM once rather than on every poll.
+        # Caches of static per-device facts, keyed by device number, so each is
+        # read over RDM once rather than on every poll: the software version,
+        # the parameters a device declares, and the control parameters it has
+        # been proven to answer (see :meth:`_async_patch_pump`).
         self._software_versions: dict[int, str | None] = {}
+        self._declared_pids: dict[int, tuple[int, ...]] = {}
+        self._supported_pids: dict[int, tuple[int, ...]] = {}
 
     async def _async_update_data(self) -> Inventory:
         """Fetch the latest inventory, mapping library errors to HA errors."""
@@ -106,16 +123,11 @@ class OaseDataUpdateCoordinator(DataUpdateCoordinator[Inventory]):
         number = device.device_number
         if number is None or not device.is_connected:
             return device
-        if device.pump_state is not None:
-            try:
-                on = await self.client.async_get_device_on(gateway_id, number)
-                raw = await self.client.async_get_pump_power(gateway_id, number)
-            except OaseError as err:
-                _LOGGER.debug("RDM pump read failed for %s: %s", number, err)
-            else:
-                device = replace(
-                    device, pump_state=replace(device.pump_state, device_on=on, dimmer_value=raw)
-                )
+        if number not in self._declared_pids:
+            self._declared_pids[number] = await self.client.async_get_supported_parameters(
+                gateway_id, number
+            )
+        device = replace(device, declared_pids=self._declared_pids[number])
         if device.is_led:
             try:
                 channels = await self.client.async_get_led_channels(gateway_id, number)
@@ -123,6 +135,8 @@ class OaseDataUpdateCoordinator(DataUpdateCoordinator[Inventory]):
                 _LOGGER.debug("RDM LED read failed for %s: %s", number, err)
             else:
                 device = replace(device, led_channels=tuple(channels))
+        else:
+            device = await self._async_patch_pump(gateway_id, device, number)
         # Diagnostics: operating hours live, software version cached (it never changes).
         try:
             hours = await self.client.async_get_operating_hours(gateway_id, number)
@@ -140,6 +154,51 @@ class OaseDataUpdateCoordinator(DataUpdateCoordinator[Inventory]):
             device,
             operating_hours=hours,
             software_version=self._software_versions.get(number),
+        )
+
+    async def _async_patch_pump(
+        self, gateway_id: str, device: Device, number: int
+    ) -> Device:
+        """Overlay a pump's live on/off and power, probing it on first sight.
+
+        The cloud publishes ``dmxPumpState`` only for pumps with Digital Flow
+        Control, so its absence says nothing about whether a device can be
+        controlled: an AquaMax answers both control parameters and still has no
+        such block (issue #1). Ask the device instead — and only by reading it.
+        A write must never be used to test for a capability; one such probe once
+        switched an outlet off and dropped an RGB controller off the bus.
+
+        A parameter is written off only when the device itself rejects the read.
+        An offline gateway or a dropped connection leaves the question open, so
+        the next poll asks again rather than stranding a pump without controls.
+        """
+        known = self._supported_pids.get(number, device.supported_pids or None)
+        changes: dict[str, Any] = {}
+        verified: list[int] = []
+        conclusive = True
+        for pid, attribute, read in _PUMP_READS:
+            if known is not None and pid not in known:
+                continue  # already answered, one way or the other
+            try:
+                changes[attribute] = await read(self.client, gateway_id, number)
+            except OaseResponseError as err:
+                _LOGGER.debug("RDM 0x%04x unsupported on device %s: %s", pid, number, err)
+            except OaseError as err:
+                _LOGGER.debug("RDM 0x%04x read failed on device %s: %s", pid, number, err)
+                conclusive = False
+            else:
+                verified.append(pid)
+        if known is None and conclusive:
+            known = self._supported_pids[number] = tuple(verified)
+        if not known:
+            return device
+        # Leave the state unset until something has actually been read, so an
+        # unreachable pump reads as unknown rather than as switched off.
+        state = device.pump_state or (PumpState() if changes else None)
+        return replace(
+            device,
+            supported_pids=known,
+            pump_state=replace(state, **changes) if state is not None else None,
         )
 
     def _persist_token_data(self) -> None:

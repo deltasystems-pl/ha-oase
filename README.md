@@ -32,7 +32,7 @@ follow the [manual steps](#installation) below.
 | `light` | Dimmer | The dimmable outlet — on/off + brightness (0–255 ↔ dimmer value). |
 | `switch` | Pump on/off | An attached pump's own on/off, independent of its outlet. |
 | `number` | Pump power | Pump power as a percentage (matches the OASE app). |
-| `select` | Pump show | Flow-control programs — Wild, Dynamic, Smooth, Calm, Splashy … or Off. |
+| `select` | Pump show | Flow-control programs — Wild, Dynamic, Smooth, Calm, Splashy … or Off. Fountain pumps only. |
 | `light` | RGB 1 / 2 / 3 | Each channel of an attached RGB controller — colour, brightness, 10 effects. |
 | `number` | RGB effect speed | Per-channel effect speed (configuration category). |
 | `sensor` | Operating hours | Per device runtime, in hours (diagnostic). |
@@ -42,6 +42,11 @@ follow the [manual steps](#installation) below.
 Each gateway becomes a Home Assistant *device*; attached OASE devices appear as child devices
 linked to their gateway, with their model name (e.g. *Expert 22000*, *RGB Controller*) and
 firmware version.
+
+Pump entities are created per capability: on startup the integration asks each attached device
+which controls it answers to — by reading them, never by writing — so a pump gets its on/off and
+power controls whether or not the OASE cloud describes it. Flow-control shows are the exception,
+as only fountain pumps run them and only the cloud reports their state.
 
 ## Requirements
 
